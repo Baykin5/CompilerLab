@@ -1,0 +1,8 @@
+int a;
+int;
+
+struct A;
+
+float b() {
+  return 1.0;
+}
