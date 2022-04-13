@@ -1,0 +1,19 @@
+int a;
+int func()
+{
+    int b=1; 
+    return b;
+}
+int main()
+{
+    int c;
+    struct st{
+        int d1,d2;
+        float e1,e2;
+        int f[10];
+    } st_1;
+    struct st st_2;
+    int g[10],h;
+
+    return 0;
+}

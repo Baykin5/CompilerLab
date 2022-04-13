@@ -1,0 +1,15 @@
+struct Position
+{
+    float x, y;
+    int x;
+};
+
+struct Test
+{
+    int z=1;
+};
+
+int main()
+{
+
+}
