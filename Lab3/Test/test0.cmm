@@ -1,0 +1,14 @@
+struct st{
+    int a;
+    int b[2];
+};
+int add(struct st temp,int d){
+    return (temp.b[1]+d+1+2);
+}
+int main(){
+    struct st array[2];
+    array[0].b[1]=read();
+    array[1].b=array[0].b;
+    write(add(array[1],10));
+    return 0;
+}

@@ -14,6 +14,9 @@ int main()
     } st_1;
     struct st st_2;
     int g[10],h;
+    st_1.f[0]=10;
+    
+    st_2.e1=func();
 
     return 0;
 }

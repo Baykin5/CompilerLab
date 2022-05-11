@@ -1,0 +1,11 @@
+int sub(int a,int b){
+    return (a-b);
+}
+int main(){
+    int z;
+    int x=read();
+    int y=read();
+    z=sub(x,y);
+    write(z);
+    return 0;
+}

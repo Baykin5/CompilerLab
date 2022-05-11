@@ -1,0 +1,64 @@
+FUNCTION add :
+PARAM v5
+PARAM v6
+addr2 := v5
+addr2 := addr2 + #4
+addr1 := addr2
+t5 := #1
+t6 := t5 * #4
+addr1 := addr1 + t6
+t4 := *addr1
+t7 := v6
+t3 := t4 + t7
+t8 := #1
+t2 := t3 + t8
+t9 := #2
+t1 := t2 + t9
+RETURN t1
+FUNCTION main :
+DEC v9 24
+addr6 := &v9
+t10 := #0
+t11 := t10 * #12
+addr6 := addr6 + t11
+addr5 := addr6
+addr5 := addr5 + #4
+addr4 := addr5
+t12 := #1
+t13 := t12 * #4
+addr4 := addr4 + t13
+addr3 := addr4
+READ t14
+*addr3 := t14
+addr9 := &v9
+t15 := #1
+t16 := t15 * #12
+addr9 := addr9 + t16
+addr8 := addr9
+addr8 := addr8 + #4
+addr7 := addr8
+addr11 := &v9
+t18 := #0
+t19 := t18 * #12
+addr11 := addr11 + t19
+addr10 := addr11
+addr10 := addr10 + #4
+addr12 := addr10
+t20 := *addr12
+*addr7 := t20
+addr7 := addr7 + #4
+addr12 := addr12 + #4
+t20 := *addr12
+*addr7 := t20
+t22 := #10
+addr13 := &v9
+t24 := #1
+t25 := t24 * #12
+addr13 := addr13 + t25
+addr14 := addr13
+ARG t22
+ARG addr14
+t21 := CALL add
+WRITE t21
+t26 := #0
+RETURN t26

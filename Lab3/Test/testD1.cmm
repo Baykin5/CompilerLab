@@ -1,0 +1,25 @@
+struct Operands
+{
+int o1;
+int o2;
+int o3;
+int o4;
+};
+
+int add(struct Operands temp)
+{
+return (temp.o1 + temp.o2 + temp.o3 + temp.o4);
+}
+
+int main()
+{
+int n;
+struct Operands op;
+op.o1 = 1;
+op.o2 = 2;
+op.o3 = 3;
+op.o4 = 4;
+n = add(op);
+write(n);
+return 0;
+}

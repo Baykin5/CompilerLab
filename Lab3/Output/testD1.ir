@@ -1,0 +1,46 @@
+FUNCTION add :
+PARAM v7
+addr1 := v7
+addr1 := addr1 + #0
+t4 := *addr1
+addr2 := v7
+addr2 := addr2 + #4
+t5 := *addr2
+t3 := t4 + t5
+addr3 := v7
+addr3 := addr3 + #8
+t6 := *addr3
+t2 := t3 + t6
+addr4 := v7
+addr4 := addr4 + #12
+t7 := *addr4
+t1 := t2 + t7
+RETURN t1
+FUNCTION main :
+DEC v11 16
+addr6 := &v11
+addr6 := addr6 + #0
+addr5 := addr6
+t8 := #1
+*addr5 := t8
+addr8 := &v11
+addr8 := addr8 + #4
+addr7 := addr8
+t9 := #2
+*addr7 := t9
+addr10 := &v11
+addr10 := addr10 + #8
+addr9 := addr10
+t10 := #3
+*addr9 := t10
+addr12 := &v11
+addr12 := addr12 + #12
+addr11 := addr12
+t11 := #4
+*addr11 := t11
+ARG t12
+v10 := CALL add
+t13 := v10
+WRITE t13
+t14 := #0
+RETURN t14

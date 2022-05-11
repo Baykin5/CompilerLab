@@ -113,32 +113,43 @@ Type StructSpecifier(TreeNode node){
     if (node->children_num==5){ // 定义了一个新的结构体
         char *name=OptTag(node->children[1]);
         if (name!=NULL){   
-            if (lookUp(SymbolTable,name)!=NULL)      // 
+            if (lookUp(SymbolTable,name)!=NULL)      
                 printErrorInfo(16,node->line,name);   // 结构体重复定义
-            else{  // 构造出该结构体类型并返回
-                Type t=(Type)malloc(sizeof(struct Type_));
-                t->kind=STRUCTURETAG;
-                t->u.structure_tag=NULL;
+            else{  
+                Type type_tag=(Type)malloc(sizeof(struct Type_));
+                type_tag->kind=STRUCTURETAG;
+                type_tag->u.structure_tag=NULL;
                 FieldList f=(FieldList)malloc(sizeof(struct FieldList_));
                 f->name=name;
-                f->type=t;
+                f->type=type_tag;
                 f->tail=NULL;
-                DefListStruct(node->children[3],t);
+                DefListStruct(node->children[3],type_tag);
                 insertTable(SymbolTable,f);
+
+                Type t1=(Type)malloc(sizeof(struct Type_));
+                t1->kind=STRUCTURE;
+                t1->u.structure=type_tag->u.structure_tag;
+                return t1;
             }
+
         }
         else{               //   定义了一个匿名的结构体 
             sprintf(name,"%d",ano_struct_cnt);
-            Type t=(Type)malloc(sizeof(struct Type_));
-            t->kind=STRUCTURETAG;
-            t->u.structure_tag=NULL;
+            Type type_tag=(Type)malloc(sizeof(struct Type_));
+            type_tag->kind=STRUCTURETAG;
+            type_tag->u.structure_tag=NULL;
             FieldList f=(FieldList)malloc(sizeof(struct FieldList_));
             f->name=name;
-            f->type=t;
+            f->type=type_tag;
             f->tail=NULL;
-            DefListStruct(node->children[3],t);
+            DefListStruct(node->children[3],type_tag);
             insertTable(SymbolTable,f);
             ano_struct_cnt++; // 记录一个匿名函数后就将计数器+1 确保匿名的名字不会重复
+
+            Type t1=(Type)malloc(sizeof(struct Type_));
+            t1->kind=STRUCTURE;
+            t1->u.structure=type_tag->u.structure_tag;
+            return t1;
         }
     }
     /* StructSpecifier -> STRUCT Tag */      // 使用了一个已定义结构体

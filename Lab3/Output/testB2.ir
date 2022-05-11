@@ -1,0 +1,21 @@
+FUNCTION sub :
+PARAM v2
+PARAM v3
+t2 := v2
+t3 := v3
+t1 := t2 - t3
+RETURN t1
+FUNCTION main :
+READ t4
+v7 := t4
+READ t5
+v8 := t5
+t6 := v8
+t7 := v7
+ARG t6
+ARG t7
+v6 := CALL sub
+t8 := v6
+WRITE t8
+t9 := #0
+RETURN t9
