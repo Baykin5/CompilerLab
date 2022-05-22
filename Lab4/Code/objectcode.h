@@ -9,7 +9,6 @@ FILE* f_out_oc;
 
 typedef struct Register_* Register;
 typedef struct Variable_* Variable;
-typedef struct RegisterList_* RegisterList;
 typedef struct VariableList_* VariableList;
 typedef struct NextUseList_* NextUseList;
 
@@ -26,13 +25,11 @@ struct Register_ { // 寄存器描述符
     int reg_no;
     char* name;              // 寄存器的名字
     enum {FREE,BUSY} state;  // 寄存器状态
-    VariableList vars;  // 该寄存器存放了哪些变量
 };
 
 struct Variable_ {  //  地址描述符
     Operand op;   // 变量参数
     Register reg;
-    RegisterList regs;  // 该变量存放于哪些寄存器
     NextUseList next_use;
     int offset;   // 在函数活动记录里的偏移量
 };
@@ -42,10 +39,6 @@ struct VariableList_{
     VariableList next;
 };
 
-struct RegisterList_{
-    Register reg;
-    RegisterList next;
-};
 
 struct NextUseList_{  // 记录变量下一次使用到的行数
     int next_no;
@@ -79,8 +72,6 @@ Register allocate(Operand op,FILE* out);
 void spillAllVar(FILE* out);
 void spill(Variable var,FILE* out);
 
-void pushVarToStack(FILE* out);
-void loadVarFromStack(FILE* out);
 
 void fprintLABEL(InterCode ic,FILE* out);
 void fprintFUNCTION(InterCode ic,FILE* out);

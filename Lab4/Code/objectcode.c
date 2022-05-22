@@ -5,7 +5,7 @@ extern BasicBlockList BBList;
 
 int max(int a,int b){  if (a>b)    return a;   else    return b;  }
 
-const bool DEBUG6=true;
+const bool DEBUG6=false;
 
 char* REG_NAME[32]={"0","at","v0","v1","a0","a1","a2","a3",
                     "t0","t1","t2","t3","t4","t5","t6","t7",
@@ -282,8 +282,6 @@ Variable opToVar(Operand op){
     var->next_use=NULL;
     var->offset = local_offset;
 
-    var->regs=NULL;
-    assert(var->regs==NULL);
     return var;
 }
 
@@ -469,7 +467,6 @@ void initReg(){  // 初始化各寄存器信息
         reg->reg_no=i;
         reg->name=REG_NAME[i];
         reg->state=FREE;
-        reg->vars=NULL;
         REG[i]=reg;
         //printf("REG %d: $%s\n",reg->reg_no,reg->name);
     }
@@ -670,12 +667,10 @@ void fprintARG(InterCode ic, FILE* out){   // TODO:
 }
 
 void fprintCALL(InterCode ic, FILE* out){  // TODO:
-    //pushVarToStack(out);  // 函数调用前将活跃变量压入栈
     spillAllVar(out);
     fprintf(out,"  jal %s\n",ic->u.two_op.right->u.func_name);
     // 调用结束 将传递到栈中的参数清零
     fprintf(out, "  addi $sp, $sp, %d\n", max(0, (arg_num - 4) * 4));
-    //loadVarFromStack(out);
     arg_num = 0;  
     // 将函数返回值传给左值
     Operand left = ic->u.two_op.left;
@@ -683,29 +678,6 @@ void fprintCALL(InterCode ic, FILE* out){  // TODO:
     fprintf(out,"  move $%s, $v0\n",reg->name);
 }
 
-void pushVarToStack(FILE* out){  // 将值存在寄存器中的变量压回栈中，以进行函数调用
-    if (DEBUG6) printf("push var to stack\n");
-    VariableList varlist=localVarList;
-    while(varlist!=NULL){
-        Variable var=varlist->var;
-        if (var->reg!=NULL){
-            fprintf(out,"  sw $%s, %d($fp)\n",var->reg->name,-var->offset);
-        }
-        varlist = varlist->next;
-    }
-}
-
-void loadVarFromStack(FILE* out){  // 将内存中的变量重新存回寄存器
-    if (DEBUG6) printf("load var from stack\n");
-    VariableList varlist=localVarList;
-    while(varlist!=NULL){
-        Variable var=varlist->var;
-        if (var->reg!=NULL){
-            fprintf(out,"  lw $%s, %d($fp)\n",var->reg->name,-var->offset);
-        }
-        varlist = varlist->next;
-    }
-}
 
 void fprintADD(InterCode ic, FILE* out){  
     Operand op1=ic->u.three_op.op1;
@@ -886,13 +858,12 @@ void freeReg(Register reg){  // 将寄存器设置为闲置
 Register allocate(Operand op, FILE* out){  // 为Operand分配一个新的寄存器
     if (DEBUG6) printf("allocate a new register\n");
     // 首先寻找空闲的寄存器，如果找到则返回
-    for (int i=8;i<15;i++){   
+    for (int i=8;i<23;i++){   
         if (REG[i]->state==FREE){     
             if (DEBUG6) printf("Find FREE Reg $%s\n",REG[i]->name);
             REG[i]->state=BUSY;
             Variable var=findVar(op);
             var->reg=REG[i];
-            //addRegForVar(var,REG[i]);
             return REG[i];
         }
     }
