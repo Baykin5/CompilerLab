@@ -11,16 +11,17 @@ int addr_cnt=1;
 
 const bool DEBUG3=false;
 
-void translateProgram(TreeNode node,char*out_name){
+void translateProgram(TreeNode node,char* out_name){
     if (DEBUG3) printf("translate_Start\n");
     /* Program -> ExtDefList */
     translateExtDefList(node->children[0]);
     if (DEBUG3) printf("translate_End\n");
-    f_out=fopen(out_name,"w");
-    assert(f_out!=NULL);
-    fprintCodes(f_out);
-    fclose(f_out);
-
+    
+    f_out_ir=fopen(out_name,"w");
+    assert(f_out_ir!=NULL);
+    fprintCodes(f_out_ir);
+    fclose(f_out_ir);
+    
 }
 
 void translateExtDefList(TreeNode node){
@@ -251,7 +252,16 @@ void translateExp(TreeNode node,Operand place){
             FieldList f=lookUp(SymbolTable,name);
             if (f->type->kind==BASIC){
                 Operand v1=genOperand(OP_VARIABLE,f->no,NULL);
-                translateExp(node->children[2],v1);
+                if (expIsConst(node->children[2])){
+                    int val=getExpConst(node->children[2]);
+                    genCode(GEN_ASSIGN,2,v1,newConst(val));
+                }
+                else{
+                    Operand right_value=newTemp();
+                    translateExp(node->children[2],right_value);
+                    genCode(GEN_ASSIGN,2,v1,right_value);
+                }
+
                 if (place!=NULL){
                     genCode(GEN_ASSIGN,2,place,v1);
                 }
@@ -740,7 +750,7 @@ int calOffset(FieldList field,char*name){  // TODO:
 }
 
 bool expIsConst(TreeNode node){
-    return (node->children_num==0 && strcmp(node->children[0]->name,"INT")==0);
+    return (node->children_num==1 && strcmp(node->children[0]->name,"INT")==0);
 }
 
 int getExpConst(TreeNode node){   // 获取常数exp的值 方便优化
