@@ -1,0 +1,25 @@
+FUNCTION choose :
+PARAM v2
+PARAM v3
+IF v2 > v3 GOTO label1
+GOTO label2
+LABEL label1 :
+t1 := v2
+RETURN t1
+GOTO label3
+LABEL label2 :
+t2 := v3
+RETURN t2
+LABEL label3 :
+FUNCTION main :
+READ t3
+v6 := t3
+READ t4
+v7 := t4
+ARG v7
+ARG v6
+t5 := CALL choose
+v8 := t5
+WRITE v8
+t6 := #0
+RETURN t6

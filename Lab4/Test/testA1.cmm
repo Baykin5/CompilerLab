@@ -1,0 +1,15 @@
+int choose(int a,int b)
+{
+	if (a>b)
+		return a;
+	else
+		return b;
+}
+int main(){
+	int x,y,z;
+	x=read();
+	y=read();
+	z=choose(x,y);
+	write(z);
+	return 0;
+}

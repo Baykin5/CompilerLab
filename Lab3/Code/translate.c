@@ -9,7 +9,7 @@ int label_cnt=1;
 int var_cnt=1;
 int addr_cnt=1;
 
-const bool DEBUG3=false;
+const bool DEBUG3 = false;
 
 void translateProgram(TreeNode node,char* out_name){
     if (DEBUG3) printf("translate_Start\n");
@@ -17,10 +17,13 @@ void translateProgram(TreeNode node,char* out_name){
     translateExtDefList(node->children[0]);
     if (DEBUG3) printf("translate_End\n");
     
-    f_out_ir=fopen(out_name,"w");
-    assert(f_out_ir!=NULL);
-    fprintCodes(f_out_ir);
-    fclose(f_out_ir);
+    if (out_name!=NULL){
+        f_out_ir=fopen(out_name,"w");
+        assert(f_out_ir!=NULL);
+        fprintCodes(f_out_ir);
+        fclose(f_out_ir);
+    }
+
     
 }
 
@@ -130,10 +133,17 @@ void translateDec(TreeNode node){
     }
     /* Dec -> VarDec ASSIGNOP Exp */
     else{
-        Operand t1=newTemp();
-        translateExp(node->children[2],t1);
-        Operand v1=translateVarDec(node->children[0]);
-        genCode(GEN_ASSIGN,2,v1,t1);
+        if (expIsConst(node->children[2])){
+            int val=getExpConst(node->children[2]);
+            Operand v1=translateVarDec(node->children[0]);
+            genCode(GEN_ASSIGN,2,v1,newConst(val));
+        }  
+        else{
+            Operand t1=newTemp();
+            translateExp(node->children[2],t1);
+            Operand v1=translateVarDec(node->children[0]);
+            genCode(GEN_ASSIGN,2,v1,t1);
+        }
     }
 }
 
@@ -256,7 +266,11 @@ void translateExp(TreeNode node,Operand place){
                     int val=getExpConst(node->children[2]);
                     genCode(GEN_ASSIGN,2,v1,newConst(val));
                 }
-                else{
+                else if (expIsID(node->children[2])){
+                    FieldList f=lookUp(SymbolTable,getExpID(node->children[2]));
+                    genCode(GEN_ASSIGN,2,v1,genOperand(OP_VARIABLE,f->no,NULL));
+                }
+                else{   
                     Operand right_value=newTemp();
                     translateExp(node->children[2],right_value);
                     genCode(GEN_ASSIGN,2,v1,right_value);
@@ -326,12 +340,20 @@ void translateExp(TreeNode node,Operand place){
             Operand t1,t2;
             if (expIsConst(node->children[0]))
                 t1=newConst(getExpConst(node->children[0]));
+            else if (expIsID(node->children[0])){
+                FieldList f=lookUp(SymbolTable,getExpID(node->children[0]));
+                t1=genOperand(OP_VARIABLE,f->no,NULL);
+            }
             else {
                 t1=newTemp();
                 translateExp(node->children[0],t1);
             }
             if (expIsConst(node->children[2]))
                 t2=newConst(getExpConst(node->children[2]));
+            else if (expIsID(node->children[2])){
+                FieldList f=lookUp(SymbolTable,getExpID(node->children[2]));
+                t2=genOperand(OP_VARIABLE,f->no,NULL);
+            }
             else {
                 t2=newTemp();
                 translateExp(node->children[2],t2);
@@ -346,12 +368,20 @@ void translateExp(TreeNode node,Operand place){
             Operand t1,t2;
             if (expIsConst(node->children[0]))
                 t1=newConst(getExpConst(node->children[0]));
+            else if (expIsID(node->children[0])){
+                FieldList f=lookUp(SymbolTable,getExpID(node->children[0]));
+                t1=genOperand(OP_VARIABLE,f->no,NULL);
+            }
             else {
                 t1=newTemp();
                 translateExp(node->children[0],t1);
             }
             if (expIsConst(node->children[2]))
                 t2=newConst(getExpConst(node->children[2]));
+            else if (expIsID(node->children[2])){
+                FieldList f=lookUp(SymbolTable,getExpID(node->children[2]));
+                t2=genOperand(OP_VARIABLE,f->no,NULL);
+            }
             else {
                 t2=newTemp();
                 translateExp(node->children[2],t2);
@@ -366,12 +396,20 @@ void translateExp(TreeNode node,Operand place){
             Operand t1,t2;
             if (expIsConst(node->children[0]))
                 t1=newConst(getExpConst(node->children[0]));
+            else if (expIsID(node->children[0])){
+                FieldList f=lookUp(SymbolTable,getExpID(node->children[0]));
+                t1=genOperand(OP_VARIABLE,f->no,NULL);
+            }
             else {
                 t1=newTemp();
                 translateExp(node->children[0],t1);
             }
             if (expIsConst(node->children[2]))
                 t2=newConst(getExpConst(node->children[2]));
+            else if (expIsID(node->children[2])){
+                FieldList f=lookUp(SymbolTable,getExpID(node->children[2]));
+                t2=genOperand(OP_VARIABLE,f->no,NULL);
+            }
             else {
                 t2=newTemp();
                 translateExp(node->children[2],t2);
@@ -387,12 +425,20 @@ void translateExp(TreeNode node,Operand place){
             Operand t1,t2;
             if (expIsConst(node->children[0]))
                 t1=newConst(getExpConst(node->children[0]));
+            else if (expIsID(node->children[0])){
+                FieldList f=lookUp(SymbolTable,getExpID(node->children[0]));
+                t1=genOperand(OP_VARIABLE,f->no,NULL);
+            }
             else {
                 t1=newTemp();
                 translateExp(node->children[0],t1);
             }
             if (expIsConst(node->children[2]))
                 t2=newConst(getExpConst(node->children[2]));
+            else if (expIsID(node->children[2])){
+                FieldList f=lookUp(SymbolTable,getExpID(node->children[2]));
+                t2=genOperand(OP_VARIABLE,f->no,NULL);
+            }
             else {
                 t2=newTemp();
                 translateExp(node->children[2],t2);
@@ -590,7 +636,7 @@ ArgNode translateArgs(TreeNode node){  // TODO:
     if (node->children_num == 1){
         Operand op;
         if (expIsID(node->children[0])){
-            op=getExpArg(node->children[0]);
+            op = getExpArg(node->children[0]);
         }
         else{
             op=newTemp();
@@ -600,10 +646,11 @@ ArgNode translateArgs(TreeNode node){  // TODO:
         arg_node->op=op;
         arg_node->next=NULL;
         return arg_node;
+
     }
     /* Arg -> EXP COMMA Arg */
     else{
-        ArgNode arg_list=translateArgs(node->children[2]);
+        ArgNode arglist = translateArgs(node->children[2]);
         Operand op;
         if (expIsID(node->children[0])){
             op=getExpArg(node->children[0]);
@@ -615,8 +662,13 @@ ArgNode translateArgs(TreeNode node){  // TODO:
         ArgNode arg_node=(ArgNode)malloc(sizeof(struct ArgNode_));
         arg_node->op=op;
         arg_node->next=NULL;
-        arg_list->next=arg_node;
-        return arg_list;
+        
+        ArgNode temp=arglist;
+        while(temp->next!=NULL)
+            temp=temp->next;
+        temp->next=arg_node;
+        return arglist;
+        
     }
 }
 
@@ -624,10 +676,30 @@ void translateCond(TreeNode node,Operand label_true,Operand label_false){
     /* EXP -> EXP RELOP EXP */
     if (node->children_num==3 && strcmp(node->children[1]->name,"RELOP")==0){
         if (DEBUG3) printf("Cond -> EXP RELOP EXP\n");
-        Operand t1=newTemp();
-        Operand t2=newTemp();
-        translateExp(node->children[0],t1);
-        translateExp(node->children[2],t2);
+        
+        Operand t1,t2;
+        if (expIsConst(node->children[0])){
+            t1=newConst(getExpConst(node->children[0]));
+        }
+        else if (expIsID(node->children[0])){
+            FieldList f=lookUp(SymbolTable,getExpID(node->children[0]));
+            t1=genOperand(OP_VARIABLE,f->no,NULL);
+        }
+        else{
+            t1=newTemp();
+            translateExp(node->children[0],t1);
+        }
+        if (expIsConst(node->children[2])){
+            t2=newConst(getExpConst(node->children[2]));
+        }
+        else if (expIsID(node->children[2])){
+            FieldList f=lookUp(SymbolTable,getExpID(node->children[2]));
+            t2=genOperand(OP_VARIABLE,f->no,NULL);
+        }
+        else{
+            t2=newTemp();
+            translateExp(node->children[2],t2);
+        }
         char* relop=getRelop(node->children[1]);
         genCode(GEN_IF,4,t1,relop,t2,label_true);
         genCode(GEN_GOTO,1,label_false);
@@ -758,7 +830,11 @@ int getExpConst(TreeNode node){   // 获取常数exp的值 方便优化
 }
 
 bool expIsID(TreeNode node){
-    return (node->children_num==0 && strcmp(node->children[0]->name,"ID")==0);
+    return (node->children_num==1 && strcmp(node->children[0]->name,"ID")==0);
+}
+
+char* getExpID(TreeNode node){
+    return node->children[0]->val.val_str;
 }
 
 Operand getExpArg(TreeNode node){  // 获取变量exp对应的Operand 方便优化

@@ -1,0 +1,17 @@
+FUNCTION main :
+DEC v3 8
+addr2 := &v3
+t1 := #0
+t2 := t1 * #4
+addr2 := addr2 + t2
+addr1 := addr2
+t3 := #1
+*addr1 := t3
+addr3 := &v3
+t5 := #0
+t6 := t5 * #4
+addr3 := addr3 + t6
+t4 := *addr3
+WRITE t4
+t7 := #0
+RETURN t7

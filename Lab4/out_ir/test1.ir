@@ -1,0 +1,21 @@
+FUNCTION main :
+v3 := #0
+v4 := #1
+v5 := #0
+READ t1
+v6 := t1
+LABEL label1 :
+IF v5 < v6 GOTO label2
+GOTO label3
+LABEL label2 :
+t2 := v3 + v4
+v7 := t2
+WRITE v4
+v3 := v4
+v4 := v7
+t3 := v5 + #1
+v5 := t3
+GOTO label1
+LABEL label3 :
+t4 := #0
+RETURN t4
